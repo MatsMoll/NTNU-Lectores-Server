@@ -102,7 +102,7 @@ class NTNUSource {
         var recordings = [Recording]()
         
         for node in recordingNodes {
-            if let recording = try? Recording.create(from: node, baseUrl: baseUrl + "/") {
+            if let recording = try? Recording.create(from: node, baseUrl: "/") {
                 recordings.append(recording)
             }
         }
