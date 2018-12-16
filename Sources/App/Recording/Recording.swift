@@ -6,9 +6,9 @@
 //
 
 import Vapor
-import FluentSQLite
+import FluentMySQL
 
-final class Recording: SQLiteModel {
+final class Recording: MySQLModel {
     
     var id: Int?
     
@@ -47,9 +47,9 @@ final class Recording: SQLiteModel {
 }
 
 
-extension Recording: SQLiteMigration {
-    static func prepare(on connection: SQLiteConnection) -> Future<Void> {
-        return SQLiteDatabase.create(Recording.self, on: connection) { (builder) in
+extension Recording: MySQLMigration {
+    static func prepare(on connection: MySQLConnection) -> Future<Void> {
+        return MySQLDatabase.create(Recording.self, on: connection) { (builder) in
             
             builder.field(for: \.id, isIdentifier: true)
             builder.field(for: \.startDate)
@@ -63,12 +63,15 @@ extension Recording: SQLiteMigration {
             builder.field(for: \.screenUrl)
             builder.field(for: \.combinedMediaUrl)
             
-            builder.unique(on: \.startDate, \.title)
+            builder.unique(on: \.audioUrl)
+            builder.unique(on: \.cameraUrl)
+            builder.unique(on: \.screenUrl)
+            builder.unique(on: \.combinedMediaUrl)
         }
     }
     
-    static func revert(on connection: SQLiteConnection) -> Future<Void> {
-        return SQLiteDatabase.delete(Recording.self, on: connection)
+    static func revert(on connection: MySQLConnection) -> Future<Void> {
+        return MySQLDatabase.delete(Recording.self, on: connection)
     }
 }
 
