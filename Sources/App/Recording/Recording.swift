@@ -49,6 +49,7 @@ final class Recording: MySQLModel {
 
 extension Recording: MySQLMigration {
     static func prepare(on connection: MySQLConnection) -> Future<Void> {
+        print("Creationg")
         return MySQLDatabase.create(Recording.self, on: connection) { (builder) in
             
             builder.field(for: \.id, isIdentifier: true)
