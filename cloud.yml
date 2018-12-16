@@ -1,2 +1,3 @@
 type: "vapor"
 swift_version: "4.1.0"
+run_parameters: "swift run Run --hostname 0.0.0.0 --port 8080"
