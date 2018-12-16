@@ -40,32 +40,32 @@ class NTNUSource {
         }
         
         
-        let calendar = Calendar(identifier: .gregorian)
-        let now = Date()
-        
-        let weekday = calendar.component(.weekday, from: now)
-        let hour = calendar.component(.hour, from: now)
-        let min = calendar.component(.minute, from: now)
-        
-        var timeInterval: TimeInterval = 0
-        
-        timeInterval += (15 - Double(min))
-        
-        if hour < 18 && hour > 8 {
-            timeInterval += 60 * 60
-        } else {
-            timeInterval += (9 + 24 - Double(hour)) * 60 * 60
-        }
-        
-        if weekday == 7 {
-            timeInterval += 2 * 24 * 60 * 60
-        } else if weekday == 1 {
-            timeInterval += 24 * 60 * 60
-        }
-        
-        DispatchQueue.global().asyncAfter(deadline: .now() + timeInterval) { [weak self] in
-            self?.fetchUpdates()
-        }
+//        let calendar = Calendar(identifier: .gregorian)
+//        let now = Date()
+//
+//        let weekday = calendar.component(.weekday, from: now)
+//        let hour = calendar.component(.hour, from: now)
+//        let min = calendar.component(.minute, from: now)
+//
+//        var timeInterval: TimeInterval = 0
+//
+//        timeInterval += (15 - Double(min))
+//
+//        if hour < 18 && hour > 8 {
+//            timeInterval += 60 * 60
+//        } else {
+//            timeInterval += (9 + 24 - Double(hour)) * 60 * 60
+//        }
+//
+//        if weekday == 7 {
+//            timeInterval += 2 * 24 * 60 * 60
+//        } else if weekday == 1 {
+//            timeInterval += 24 * 60 * 60
+//        }
+//
+//        DispatchQueue.global().asyncAfter(deadline: .now() + timeInterval) { [weak self] in
+//            self?.fetchUpdates()
+//        }
     }
     
     
