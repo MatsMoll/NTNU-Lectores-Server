@@ -1,10 +1,10 @@
-import FluentMySQL
+import FluentPostgreSQL
 import Vapor
 
 /// Called before your application initializes.
 public func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
     // Register providers first
-    try services.register(MySQLProvider())
+    try services.register(FluentPostgreSQLProvider())
 
     // Register routes to the router
     let router = EngineRouter.default()
@@ -18,35 +18,33 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     middlewares.use(ErrorMiddleware.self) // Catches errors and converts to HTTP response
     services.register(middlewares)
 
-    // Configure a MySQL database
-    let mysqlConfig: MySQLDatabaseConfig!
+    // Configure a PostgreSQL database
+    let postgreSQLConfig: PostgreSQLDatabaseConfig!
     if let url = Environment.get("DATABASE_URL") {
-        guard let urlConfig = try MySQLDatabaseConfig(url: url) else {
-            fatalError("Failed to create MySQL Config")
+        guard let urlConfig = PostgreSQLDatabaseConfig(url: url) else {
+            fatalError("Failed to create PostgreSQL Config")
         }
-        mysqlConfig = urlConfig
+        postgreSQLConfig = urlConfig
     } else {
-        let databasePort = 3306
+        let databasePort = 5432
         let databaseName = Environment.get("DATABASE_DB") ?? "vapor"
         let hostname = Environment.get("DATABASE_HOSTNAME") ?? "localhost"
         let username = Environment.get("DATABASE_USER") ?? "vapor"
-        let password = Environment.get("DATABASE_PASSWORD") ?? "password"
+        let password = Environment.get("DATABASE_PASSWORD") ?? nil
         print("name: \(databaseName)\nhost: \(hostname)")
-        print("name: \(username)\nhost: \(password)")
-        mysqlConfig = MySQLDatabaseConfig(hostname: hostname, port: databasePort, username: username, password: password, database: databaseName)
+        print("username: \(username)\npaw: \(password)")
+        postgreSQLConfig = PostgreSQLDatabaseConfig(hostname: hostname, port: databasePort, username: username, database: databaseName, password: password)
     }
-    let mysql = MySQLDatabase(config: mysqlConfig)
+    let postgreSQL = PostgreSQLDatabase(config: postgreSQLConfig)
 
     // Register the configured SQLite database to the database config.
     var databases = DatabasesConfig()
-    databases.enableLogging(on: .mysql)
-    databases.add(database: mysql, as: .mysql)
+    databases.enableLogging(on: .psql)
+    databases.add(database: postgreSQL, as: .psql)
     services.register(databases)
 
     /// Configure migrations
     var migrations = MigrationConfig()
-    migrations.add(model: Recording.self, database: .mysql)
+    migrations.add(model: Recording.self, database: .psql)
     services.register(migrations)
-    
-//    NTNUSource.shared?.fetchUpdates()
 }

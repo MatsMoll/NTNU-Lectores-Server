@@ -6,9 +6,9 @@
 //
 
 import Vapor
-import FluentMySQL
+import FluentPostgreSQL
 
-final class Recording: MySQLModel {
+final class Recording: PostgreSQLModel {
     
     var id: Int?
     
@@ -47,10 +47,10 @@ final class Recording: MySQLModel {
 }
 
 
-extension Recording: MySQLMigration {
-    static func prepare(on connection: MySQLConnection) -> Future<Void> {
+extension Recording: PostgreSQLMigration {
+    static func prepare(on connection: PostgreSQLConnection) -> Future<Void> {
         print("Creationg")
-        return MySQLDatabase.create(Recording.self, on: connection) { (builder) in
+        return PostgreSQLDatabase.create(Recording.self, on: connection) { (builder) in
             
             builder.field(for: \.id, isIdentifier: true)
             builder.field(for: \.startDate)
@@ -71,8 +71,8 @@ extension Recording: MySQLMigration {
         }
     }
     
-    static func revert(on connection: MySQLConnection) -> Future<Void> {
-        return MySQLDatabase.delete(Recording.self, on: connection)
+    static func revert(on connection: PostgreSQLConnection) -> Future<Void> {
+        return PostgreSQLDatabase.delete(Recording.self, on: connection)
     }
 }
 
