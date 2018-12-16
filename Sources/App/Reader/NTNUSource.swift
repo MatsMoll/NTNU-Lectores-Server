@@ -82,7 +82,7 @@ class NTNUSource {
                     
                     // Will throw if adding a recording if it allreay exists (because of unique constraint)
                     // May also do for some other instinces
-                    _ = try? recording.save(on: connection).wait()
+                    _ = try recording.save(on: connection).wait()
                 }
             }
             
@@ -90,6 +90,30 @@ class NTNUSource {
                 let nextPagePath = nextPageNode.first?.stringValue {
                 try loadRecords(baseUrl: baseUrl, path: nextPagePath)
             }
+        }
+    }
+    
+    func allRecordings(from data: Data) -> (nextPath: String?, recoridngs: [Recording]) {
+        
+        if let document = try? XMLDocument(data: data, options: .documentTidyHTML),
+            let recordingNodes = try? document.nodes(forXPath: "//tr[@class='lecture']") {
+            
+            var recordings = [Recording]()
+            
+            for node in recordingNodes {
+                if let recording = try? Recording.create(from: node, baseUrl: baseUrl + "/") {
+                    recordings.append(recording)
+                }
+            }
+            
+            if let nextPageNode = try? document.nodes(forXPath: "//div[@class='paginator']//a[. = 'Neste']/@href"),
+                let nextPagePath = nextPageNode.first?.stringValue {
+                return (nextPagePath, recordings)
+            } else {
+                return (nil, recordings)
+            }
+        } else {
+            return (nil, [])
         }
     }
 }

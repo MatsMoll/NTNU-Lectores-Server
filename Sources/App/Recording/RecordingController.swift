@@ -36,6 +36,13 @@ class RecordingController {
             return Recording.query(on: req).all()
         }
     }
+    
+    func evaluateData(_ req: Request) throws -> Future<[Recording]> {
+        return try req.content.decode(HTMLData.self).map { (html) in
+            let data = html.data.data(using: .utf8)
+            return NTNUSource.shared?.allRecordings(from: data!).recoridngs ?? []
+        }
+    }
 }
 
 
@@ -44,4 +51,8 @@ struct RecordingFilter: Content {
     let amount: Int?
     let lector: String?
     let subject: String?
+}
+
+struct HTMLData: Content {
+    let data: String
 }

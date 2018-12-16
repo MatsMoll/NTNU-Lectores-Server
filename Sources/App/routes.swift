@@ -6,4 +6,5 @@ public func routes(_ router: Router) throws {
     
     let controller = RecordingController()
     router.get("recordings", use: controller.getAll)
+    router.post("recoding-test", use: controller.evaluateData)
 }
