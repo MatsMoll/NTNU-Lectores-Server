@@ -74,6 +74,10 @@ class NTNUSource {
     
     private func loadRecords(baseUrl: String, path: String) throws {
         
+        guard let connection = connection else {
+            throw Abort(.internalServerError, reason: "Missing db connection")
+        }
+        
         let recordsUrl = baseUrl + path
         let httpResponse = try app.client().get(recordsUrl).wait()
         
