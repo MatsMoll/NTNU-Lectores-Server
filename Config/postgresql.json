@@ -2,6 +2,5 @@
     "hostname": "$DATABASE_HOSTNAME",
     "user": "$DATABASE_USER",
     "password": "$DATABASE_PASSWORD",
-    "database": "$DATABASE_DB",
-    "encoding": "utf8mb4"
+    "database": "$DATABASE_DB"
 }
