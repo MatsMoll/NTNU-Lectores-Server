@@ -18,7 +18,7 @@ class NTNUSource {
     private let baseUrl = "https://forelesning.gjovik.ntnu.no"
     
     /// The site to find the content
-    private let startPath = "/publish/index.php"
+    private let startPath = "/publish/index.php?page=13"
     
     private var timer: Timer?
     

@@ -114,7 +114,9 @@ extension Recording {
             var lector = lectorNode.stringValue else {
                 throw Errors.unableToFindDate
         }
-        lector.removeLast()
+        while lector.last == " " {
+            lector.removeLast()
+        }
         
         guard let titleNode = node.child(at: 3),
             var title = titleNode.stringValue else {
@@ -128,7 +130,9 @@ extension Recording {
             var subject = subjectNode.stringValue else {
                 throw Errors.unableToFindDate
         }
-        subject.removeLast()
+        while subject.last == " " {
+            subject.removeLast()
+        }
         
         guard let paths = try node.child(at: 5)?.nodes(forXPath: "./a/@href"),
             paths.count >= 4,
