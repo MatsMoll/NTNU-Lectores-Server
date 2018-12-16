@@ -6,6 +6,7 @@
 //
 
 import Vapor
+import Foundation
 
 
 class NTNUSource {
@@ -93,27 +94,24 @@ class NTNUSource {
         }
     }
     
-    func allRecordings(from data: Data) -> (nextPath: String?, recoridngs: [Recording]) {
+    func allRecordings(from data: Data) throws -> (nextPath: String?, recoridngs: [Recording]) {
         
-        if let document = try? XMLDocument(data: data, options: .documentTidyHTML),
-            let recordingNodes = try? document.nodes(forXPath: "//tr[@class='lecture']") {
-            
-            var recordings = [Recording]()
-            
-            for node in recordingNodes {
-                if let recording = try? Recording.create(from: node, baseUrl: baseUrl + "/") {
-                    recordings.append(recording)
-                }
+        let document = try XMLDocument(data: data, options: .documentTidyHTML)
+        let recordingNodes = try document.nodes(forXPath: "//tr[@class='lecture']")
+        
+        var recordings = [Recording]()
+        
+        for node in recordingNodes {
+            if let recording = try? Recording.create(from: node, baseUrl: baseUrl + "/") {
+                recordings.append(recording)
             }
-            
-            if let nextPageNode = try? document.nodes(forXPath: "//div[@class='paginator']//a[. = 'Neste']/@href"),
-                let nextPagePath = nextPageNode.first?.stringValue {
-                return (nextPagePath, recordings)
-            } else {
-                return (nil, recordings)
-            }
+        }
+        
+        if let nextPageNode = try? document.nodes(forXPath: "//div[@class='paginator']//a[. = 'Neste']/@href"),
+            let nextPagePath = nextPageNode.first?.stringValue {
+            return (nextPagePath, recordings)
         } else {
-            return (nil, [])
+            return (nil, recordings)
         }
     }
 }

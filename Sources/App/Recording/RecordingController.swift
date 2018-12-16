@@ -40,7 +40,7 @@ class RecordingController {
     func evaluateData(_ req: Request) throws -> Future<[Recording]> {
         return try req.content.decode(HTMLData.self).map { (html) in
             let data = html.data.data(using: .utf8)
-            return NTNUSource.shared?.allRecordings(from: data!).recoridngs ?? []
+            return try NTNUSource.shared?.allRecordings(from: data!).recoridngs ?? []
         }
     }
 }
