@@ -47,5 +47,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     var migrations = MigrationConfig()
     migrations.add(model: Recording.self, database: .mysql)
     services.register(migrations)
-
+    
+    NTNUSource.shared = try NTNUSource(app: app)
+    NTNUSource.shared?.fetchUpdates()
 }
