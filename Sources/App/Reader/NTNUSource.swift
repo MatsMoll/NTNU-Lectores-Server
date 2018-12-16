@@ -83,7 +83,7 @@ class NTNUSource {
                     
                     // Will throw if adding a recording if it allreay exists (because of unique constraint)
                     // May also do for some other instinces
-                    _ = try recording.save(on: connection).wait()
+                    _ = try? recording.save(on: connection).wait()
                 }
             }
             
