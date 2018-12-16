@@ -1,4 +1,3 @@
-import Authentication
 import FluentMySQL
 import Vapor
 
