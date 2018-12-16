@@ -31,8 +31,6 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
         let hostname = Environment.get("DATABASE_HOSTNAME") ?? "localhost"
         let username = Environment.get("DATABASE_USER") ?? "vapor"
         let password = Environment.get("DATABASE_PASSWORD") ?? nil
-        print("name: \(databaseName)\nhost: \(hostname)")
-        print("username: \(username)\npaw: \(password)")
         postgreSQLConfig = PostgreSQLDatabaseConfig(hostname: hostname, port: databasePort, username: username, database: databaseName, password: password)
     }
     let postgreSQL = PostgreSQLDatabase(config: postgreSQLConfig)

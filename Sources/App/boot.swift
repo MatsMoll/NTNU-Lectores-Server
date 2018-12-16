@@ -3,6 +3,6 @@ import Vapor
 /// Called after your application has initialized.
 public func boot(_ app: Application) throws {
     // your code here
-//    NTNUSource.shared = try NTNUSource(app: app)
-//    NTNUSource.shared?.fetchUpdates()
+    NTNUSource.shared = try NTNUSource(app: app)
+    NTNUSource.shared?.fetchUpdates()
 }
