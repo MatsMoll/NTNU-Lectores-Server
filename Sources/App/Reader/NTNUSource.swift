@@ -74,8 +74,7 @@ class NTNUSource {
         let httpResponse = try app.client().get(recordsUrl).wait()
         
         if let data = httpResponse.http.body.data,
-            let string = String(data: data, encoding: .utf8),
-            let document = try? XMLDocument(xmlString: string, options: .documentTidyHTML),
+            let document = try? XMLDocument(data: data, options: .documentTidyHTML),
             let recordingNodes = try? document.nodes(forXPath: "//tr[@class='lecture']") {
             
             for node in recordingNodes {
