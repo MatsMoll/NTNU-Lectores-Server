@@ -32,6 +32,7 @@ class NTNUSource {
     
     
     func fetchUpdates() {
+        print("Fetching at: \(Date().description)")
         do {
             connection = try app.connectionPool(to: .psql).requestConnection().wait()
             try loadRecords(baseUrl: baseUrl, path: startPath)
