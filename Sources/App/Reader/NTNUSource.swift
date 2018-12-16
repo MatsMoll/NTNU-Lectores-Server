@@ -83,6 +83,9 @@ class NTNUSource {
                     
                     // Will throw if adding a recording if it allreay exists (because of unique constraint)
                     // May also do for some other instinces
+                    guard try Recording.query(on: connection).filter(\Recording.audioUrl, .equal, recording.audioUrl).all().wait().isEmpty else {
+                        return
+                    }
                     _ = try recording.save(on: connection).wait()
                 }
             }
