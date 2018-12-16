@@ -23,18 +23,20 @@ class NTNUSource {
     private var timer: Timer?
     
     private let app: Application
-    private let connection: DatabaseConnectable
+    private var connection: DatabaseConnectable?
     
     
     init(app: Application) throws {
         self.app = app
-        self.connection = try app.connectionPool(to: .psql).requestConnection().wait()
     }
     
     
     func fetchUpdates() {
         do {
+            connection = try app.connectionPool(to: .psql).requestConnection().wait()
             try loadRecords(baseUrl: baseUrl, path: startPath)
+            try connection?.syncShutdownGracefully()
+            connection = nil
         } catch {
             print("Error: ", error.localizedDescription)
         }
