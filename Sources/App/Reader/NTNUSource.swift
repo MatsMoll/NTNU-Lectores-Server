@@ -27,7 +27,7 @@ class NTNUSource {
     
     init(app: Application) throws {
         self.app = app
-        self.connection = try app.connectionPool(to: .sqlite).requestConnection().wait()
+        self.connection = try app.connectionPool(to: .mysql).requestConnection().wait()
     }
     
     
