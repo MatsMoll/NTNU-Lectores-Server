@@ -94,7 +94,7 @@ class NTNUSource {
         }
     }
     
-    func allRecordings(from data: Data) throws -> (nextPath: String?, recoridngs: [Recording]) {
+    static func allRecordings(from data: Data) throws -> (nextPath: String?, recoridngs: [Recording]) {
         
         let document = try XMLDocument(data: data, options: .documentTidyHTML)
         let recordingNodes = try document.nodes(forXPath: "//tr[@class='lecture']")
