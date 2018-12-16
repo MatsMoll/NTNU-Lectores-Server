@@ -31,6 +31,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
         let hostname = Environment.get("DATABASE_HOSTNAME") ?? "localhost"
         let username = Environment.get("DATABASE_USER") ?? "vapor"
         let password = Environment.get("DATABASE_PASSWORD") ?? "password"
+        print("name: \(databaseName)\nhost: \(hostname)")
         mysqlConfig = MySQLDatabaseConfig(hostname: hostname, port: databasePort, username: username, password: password, database: databaseName)
     }
     let mysql = MySQLDatabase(config: mysqlConfig)
