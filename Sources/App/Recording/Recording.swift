@@ -90,7 +90,9 @@ extension Recording {
             var dateString = dateNode.stringValue else {
                 throw Errors.unableToFindDate
         }
-        dateString.removeLast()
+        while dateString.last == " " {
+                dateString.removeLast()
+        }
         
         guard let date = formatter.date(from: dateString) else {
             throw Errors.unableToFindDate
@@ -122,7 +124,7 @@ extension Recording {
             var title = titleNode.stringValue else {
                 throw Errors.unableToFindDate
         }
-        if !title.isEmpty {
+        while title.last == " " {
             title.removeLast()
         }
         
