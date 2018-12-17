@@ -12,6 +12,7 @@ class RecordingController {
     
     func getAll(_ req: Request) -> Future<[Recording]> {
         
+        return req.future().map { [] }
         if let filters = try? req.query.decode(RecordingFilter.self) {
             
             var query = Recording.query(on: req)
