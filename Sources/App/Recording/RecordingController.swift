@@ -46,8 +46,8 @@ class RecordingController {
     
     func startGjovikFetch(_ req: Request) throws -> Future<HTTPStatus> {
         
-        return try req.content.decode(NTNUGjovikFetchRequest.self).map { (fetch) in
-            NTNUSource.shared?.fetchUpdates(startPage: fetch.startPage)
+        return try req.content.decode(NTNUGjovikFetchRequest.self).map { [unowned req] (fetch) in
+            NTNUSource.shared.fetchUpdates(with: req, startPage: fetch.startPage)
             return .ok
         }
     }

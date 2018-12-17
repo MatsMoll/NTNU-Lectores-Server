@@ -11,7 +11,7 @@ import Foundation
 
 class NTNUSource {
     
-    static var shared: NTNUSource?
+    static var shared: NTNUSource = NTNUSource()
     
     /// The base url of the site
     /// NB: Because of the setup on the site, the last "/" needs to be omited
@@ -20,27 +20,13 @@ class NTNUSource {
     /// The site to find the content
     private let startPath = "/publish/index.php"
     
-    private var timer: Timer?
-    
-    private let app: Application
-    private var connection: DatabaseConnectable?
     private var isSchedualed: Bool = false
     
     
-    init(app: Application) throws {
-        self.app = app
-    }
-    
-    
-    func fetchUpdates(startPage: Int = 0) {
+    func fetchUpdates(with req: Request, startPage: Int = 0) {
         print("Fetching at: \(Date().description)")
         do {
-            _ = try app.connectionPool(to: .psql).requestConnection().map({ [unowned self] (connection) -> Void in
-                self.connection = connection
-                try self.loadRecords(baseUrl: self.baseUrl, path: self.startPath + "?page=\(startPage)")
-                try self.connection?.syncShutdownGracefully()
-                self.connection = nil
-            })
+            try loadRecords(with: req, baseUrl: baseUrl, path: startPath + "?page=\(startPage)")
         } catch {
             print("Error: ", error.localizedDescription)
         }
@@ -73,20 +59,15 @@ class NTNUSource {
 
         DispatchQueue.global().asyncAfter(deadline: .now() + timeInterval) { [weak self] in
             self?.isSchedualed = false
-            self?.fetchUpdates()
+            self?.fetchUpdates(with: req)
         }
     }
     
     
-    private func loadRecords(baseUrl: String, path: String) throws {
-        
-        guard let connection = connection else {
-            throw Abort(.internalServerError, reason: "Missing db connection")
-        }
+    private func loadRecords(with req: Request, baseUrl: String, path: String) throws {
         
         let recordsUrl = baseUrl + path
-        _ = try app.client().get(recordsUrl).map({ [unowned self] (httpResponse) in
-            
+        _ = try req.client().get(recordsUrl).map({ [unowned self] (httpResponse) in
             guard let data = httpResponse.http.body.data,
                 let document = try? XMLDocument(data: data, options: .documentTidyHTML),
                 let recordingNodes = try? document.nodes(forXPath: "//tr[@class='lecture']") else {
@@ -100,17 +81,19 @@ class NTNUSource {
                     
                     // Will throw if adding a recording if it allreay exists (because of unique constraint)
                     // May also do for some other instinces
-                    if try Recording.query(on: connection).filter(\Recording.audioUrl, .equal, recording.audioUrl).all().wait().isEmpty {
-                        saves.append(recording.save(on: connection))
-                    }
+                    _ = Recording.query(on: req).filter(\Recording.audioUrl, .equal, recording.audioUrl).first().map({ (existing) in
+                        if existing == nil {
+                            saves.append(recording.save(on: req))
+                        }
+                    })
                 }
             }
             
-            _ = saves.flatten(on: self.app)
+            _ = saves.flatten(on: req)
             
             if let nextPageNode = try? document.nodes(forXPath: "//div[@class='paginator']//a[. = 'Neste']/@href"),
                 let nextPagePath = nextPageNode.first?.stringValue {
-                try self.loadRecords(baseUrl: baseUrl, path: nextPagePath)
+                try self.loadRecords(with: req, baseUrl: baseUrl, path: nextPagePath)
             }
         })
     }
