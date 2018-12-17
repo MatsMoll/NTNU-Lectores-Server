@@ -1,1 +1,1 @@
-web: NTNULectures --workers 5 --bind 0.0.0.0:$PORT
+web: Run --workers 5 --bind 0.0.0.0:$PORT
