@@ -31,9 +31,9 @@ class RecordingController {
                 query = query.range(cursor..<(cursor + amount))
             }
             
-            return query.sort(\.startDate, .ascending).all()
+            return query.sort(\.startDate, .descending).all()
         } else {
-            return Recording.query(on: req).sort(\.startDate, .ascending).all()
+            return Recording.query(on: req).sort(\.startDate, .descending).all()
         }
     }
     
