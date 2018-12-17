@@ -35,10 +35,12 @@ class NTNUSource {
     func fetchUpdates(startPage: Int = 0) {
         print("Fetching at: \(Date().description)")
         do {
-            connection = try app.connectionPool(to: .psql).requestConnection().wait()
-            try loadRecords(baseUrl: baseUrl, path: startPath + "?page=\(startPage)")
-            try connection?.syncShutdownGracefully()
-            connection = nil
+            _ = try app.connectionPool(to: .psql).requestConnection().map({ [unowned self] (connection) -> Void in
+                self.connection = connection
+                try self.loadRecords(baseUrl: self.baseUrl, path: self.startPath + "?page=\(startPage)")
+                try self.connection?.syncShutdownGracefully()
+                self.connection = nil
+            })
         } catch {
             print("Error: ", error.localizedDescription)
         }
@@ -83,29 +85,34 @@ class NTNUSource {
         }
         
         let recordsUrl = baseUrl + path
-        let httpResponse = try app.client().get(recordsUrl).wait()
-        
-        if let data = httpResponse.http.body.data,
-            let document = try? XMLDocument(data: data, options: .documentTidyHTML),
-            let recordingNodes = try? document.nodes(forXPath: "//tr[@class='lecture']") {
+        _ = try app.client().get(recordsUrl).map({ [unowned self] (httpResponse) in
+            
+            guard let data = httpResponse.http.body.data,
+                let document = try? XMLDocument(data: data, options: .documentTidyHTML),
+                let recordingNodes = try? document.nodes(forXPath: "//tr[@class='lecture']") else {
+                    throw Abort(.internalServerError)
+            }
+            
+            var saves = [EventLoopFuture<Recording>]()
             
             for node in recordingNodes {
                 if let recording = try? Recording.create(from: node, baseUrl: baseUrl + "/") {
                     
                     // Will throw if adding a recording if it allreay exists (because of unique constraint)
                     // May also do for some other instinces
-                    guard try Recording.query(on: connection).filter(\Recording.audioUrl, .equal, recording.audioUrl).all().wait().isEmpty else {
-                        return
+                    if try Recording.query(on: connection).filter(\Recording.audioUrl, .equal, recording.audioUrl).all().wait().isEmpty {
+                        saves.append(recording.save(on: connection))
                     }
-                    _ = try recording.save(on: connection).wait()
                 }
             }
             
+            _ = saves.flatten(on: self.app)
+            
             if let nextPageNode = try? document.nodes(forXPath: "//div[@class='paginator']//a[. = 'Neste']/@href"),
                 let nextPagePath = nextPageNode.first?.stringValue {
-                try loadRecords(baseUrl: baseUrl, path: nextPagePath)
+                try self.loadRecords(baseUrl: baseUrl, path: nextPagePath)
             }
-        }
+        })
     }
     
     static func allRecordings(from data: Data) throws -> (nextPath: String?, recoridngs: [Recording]) {
