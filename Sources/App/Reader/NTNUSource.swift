@@ -24,6 +24,7 @@ class NTNUSource {
     
     private let app: Application
     private var connection: DatabaseConnectable?
+    private var isSchedualed: Bool = false
     
     
     init(app: Application) throws {
@@ -31,17 +32,19 @@ class NTNUSource {
     }
     
     
-    func fetchUpdates() {
+    func fetchUpdates(startPage: Int = 0) {
         print("Fetching at: \(Date().description)")
         do {
             connection = try app.connectionPool(to: .psql).requestConnection().wait()
-            try loadRecords(baseUrl: baseUrl, path: startPath)
+            try loadRecords(baseUrl: baseUrl, path: startPath + "?page=\(startPage)")
             try connection?.syncShutdownGracefully()
             connection = nil
         } catch {
             print("Error: ", error.localizedDescription)
         }
         
+        guard !isSchedualed else { return }
+        isSchedualed = true
         
         let calendar = Calendar(identifier: .gregorian)
         let now = Date()
@@ -67,6 +70,7 @@ class NTNUSource {
         }
 
         DispatchQueue.global().asyncAfter(deadline: .now() + timeInterval) { [weak self] in
+            self?.isSchedualed = false
             self?.fetchUpdates()
         }
     }

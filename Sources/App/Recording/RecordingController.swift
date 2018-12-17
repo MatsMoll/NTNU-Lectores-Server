@@ -43,6 +43,14 @@ class RecordingController {
             return try NTNUSource.allRecordings(from: data!).recoridngs
         }
     }
+    
+    func startGjovikFetch(_ req: Request) throws -> Future<HTTPStatus> {
+        
+        return try req.content.decode(NTNUGjovikFetchRequest.self).map { (fetch) in
+            NTNUSource.shared?.fetchUpdates(startPage: fetch.startPage)
+            return .ok
+        }
+    }
 }
 
 
@@ -55,4 +63,8 @@ struct RecordingFilter: Content {
 
 struct HTMLData: Content {
     let data: String
+}
+
+struct NTNUGjovikFetchRequest: Content {
+    let startPage: Int
 }

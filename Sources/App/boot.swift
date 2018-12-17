@@ -4,5 +4,4 @@ import Vapor
 public func boot(_ app: Application) throws {
     // your code here
     NTNUSource.shared = try NTNUSource(app: app)
-    NTNUSource.shared?.fetchUpdates()
 }
