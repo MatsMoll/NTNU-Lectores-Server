@@ -56,6 +56,15 @@
         }
       },
       {
+        "package": "FluentQuery",
+        "repositoryURL": "https://github.com/MihaelIsaev/FluentQuery.git",
+        "state": {
+          "branch": null,
+          "revision": "db043b3fe09a3c6c685b9c2927d8cc019f63cfc1",
+          "version": "0.4.31"
+        }
+      },
+      {
         "package": "HTTP",
         "repositoryURL": "https://github.com/vapor/http.git",
         "state": {

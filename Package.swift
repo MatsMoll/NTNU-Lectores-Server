@@ -12,9 +12,12 @@ let package = Package(
         
         
         .package(url: "https://github.com/vapor/url-encoded-form.git", from: "1.0.0"),
+        
+        // Adding more complex query commands
+        .package(url: "https://github.com/MihaelIsaev/FluentQuery.git", from: "0.4.30")
     ],
     targets: [
-        .target(name: "App", dependencies: ["URLEncodedForm", "FluentPostgreSQL", "Vapor"]),
+        .target(name: "App", dependencies: ["FluentQuery", "URLEncodedForm", "FluentPostgreSQL", "Vapor"]),
         .target(name: "Run", dependencies: ["App"]),
         .testTarget(name: "AppTests", dependencies: ["App"])
     ]

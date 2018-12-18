@@ -8,4 +8,5 @@ public func routes(_ router: Router) throws {
     router.get("recordings", use: controller.getAll)
     router.post("recoding-test", use: controller.evaluateData)
     router.post("fetch-gjovik-content", use: controller.startGjovikFetch)
+    router.get("lectores", use: controller.listLectors)
 }

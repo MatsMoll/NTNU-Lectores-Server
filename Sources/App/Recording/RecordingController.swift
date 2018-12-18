@@ -7,6 +7,7 @@
 
 import Vapor
 import FluentPostgreSQL
+import FluentQuery
 
 class RecordingController {
     
@@ -51,6 +52,16 @@ class RecordingController {
             return .ok
         }
     }
+    
+    func listLectors(_ req: Request) -> Future<[RecordingLectureResponse]> {
+        
+        return req.withNewConnection(to: .psql, closure: { (conn) in
+            try FQL().select(distinct: \Recording.lector)
+                .from(Recording.self)
+                .execute(on: conn)
+                .decode(RecordingLectureResponse.self)
+        })
+    }
 }
 
 
@@ -67,4 +78,8 @@ struct HTMLData: Content {
 
 struct NTNUGjovikFetchRequest: Content {
     let startPage: Int
+}
+
+struct RecordingLectureResponse: Content {
+    let lector: String?
 }
