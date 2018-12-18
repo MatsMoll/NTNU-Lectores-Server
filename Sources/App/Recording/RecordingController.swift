@@ -55,12 +55,21 @@ class RecordingController {
     
     func listLectors(_ req: Request) -> Future<[RecordingLectureResponse]> {
         
-        return req.withNewConnection(to: .psql, closure: { (conn) in
+        return req.withNewConnection(to: .psql) { (conn) in
             try FQL().select(distinct: \Recording.lector)
                 .from(Recording.self)
                 .execute(on: conn)
                 .decode(RecordingLectureResponse.self)
-        })
+        }
+    }
+    
+    func listSubjects(_ req: Request) -> Future<[RecordingSubjectResponse]> {
+        return req.withNewConnection(to: .psql) { (conn) in
+            try FQL().select(distinct: \Recording.subject)
+                .from(Recording.self)
+                .execute(on: conn)
+                .decode(RecordingSubjectResponse.self)
+        }
     }
 }
 
@@ -82,4 +91,8 @@ struct NTNUGjovikFetchRequest: Content {
 
 struct RecordingLectureResponse: Content {
     let lector: String?
+}
+
+struct RecordingSubjectResponse: Content {
+    let subject: String
 }
