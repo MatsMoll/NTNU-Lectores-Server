@@ -2,6 +2,9 @@
 
 A small server project that makes it simple to query different lectures.
 
+### Base URL
+https://ntnu-lectures-server.herokuapp.com
+
 ## GET /recordings
 
 Returns a list of lectures
