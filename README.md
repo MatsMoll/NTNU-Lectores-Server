@@ -29,7 +29,6 @@ subject - String value. Filter on subject code
         "id": 1,
         "info": "Muntlig fremføring"
     },
-    ...
 ]
 ```
 
@@ -44,7 +43,6 @@ Returns all lectores
     {
         "lector": "Robin Sommer"
     },
-    ...
 ]
 ```
 
@@ -59,6 +57,5 @@ Returns all subjects
     {
         "subject": "IMT1021"
     },
-    ...
 ]
 ```
