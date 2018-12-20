@@ -7,9 +7,13 @@ A small server project that makes it simple to query different lectures.
 Returns a list of lectures
 
 ### Parameters
+
 cursor - Int value that "skipes" the n-th first values
+
 amount - Int value that controls the maximum amount of recordings
+
 lector - String value. Filter recordings on lector
+
 subject - String value. Filter on subject code
 
 ### Example response
