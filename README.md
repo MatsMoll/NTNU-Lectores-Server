@@ -39,9 +39,9 @@ subject - String value. Filter on subject code
 ]
 ```
 
-## GET /lectores
+## GET /lectors
 
-Returns all lectores
+Returns all lectors
 
 ### Example response
 
